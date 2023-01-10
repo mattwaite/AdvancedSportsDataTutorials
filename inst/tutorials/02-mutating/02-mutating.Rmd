@@ -1,0 +1,177 @@
+---
+title: "Lesson 2: Mutating data review"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+description: >
+  Learn how to make new columns of data.
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(gradethis)
+library(glue)
+library(tidyverse)
+knitr::opts_chunk$set(echo = FALSE)
+tutorial_options(exercise.completion=FALSE)
+```
+
+# Mutating data
+
+## The basics
+
+One of the most common data analysis techniques is to create a new stat out of existing stats provided by a league or sport. More often than not, this is meant to level the playing field, so to speak. It's hard to compare players or teams who have played a different number of games, or appeared for a different number of minutes. Often what we need is a per game or per attempt metric. 
+
+First we'll import the tidyverse so we can read in our data and begin to work with it.
+
+```{r load-tidyverse, exercise=TRUE}
+library(tidyverse)
+```
+```{r load-tidyverse-solution}
+library(tidyverse)
+```
+```{r load-tidyverse-check}
+grade_this_code()
+```
+
+We're going to look at the NBA data we used for the last tutorial and ask a couple of questions. You can download the data here if you want to use it in your own notebook. **For purposes of this exercise, you don't need to do this. The data is included here if you want to try this in your own notebook.**
+
+```{r echo=FALSE, class.output="bg-info", results="asis",  message=FALSE,  warning=FALSE}
+library(downloadthis)
+library(glue)
+
+dllink <- download_link(
+  link = "http://mattwaite.github.io/sportsdatafiles/allplayers.csv",
+  button_label = "Download csv file",
+  button_type = "danger",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+
+glue("<pre><p><strong>For this walkthrough:</strong></p><p>{dllink}</p></pre>")
+
+```
+
+Your first task is to import the data. For this exercise, you need to simply run this:
+
+```{r mutating-load-data, message=FALSE, warning=FALSE}
+players <- read_csv("http://mattwaite.github.io/sportsdatafiles/allplayers.csv")
+
+efficient <- players %>% mutate(
+  ppg = PTS/G,
+  ppm = PTS/MP
+) %>% 
+  arrange(desc(ppg)) %>% slice(1)
+
+cleanpass <- players %>%
+  mutate(AssistTurnover = (AST/TOV)
+) %>%
+  arrange(desc(AssistTurnover)) %>% slice(1)
+```
+```{r mutating-load-data-exercise, exercise = TRUE}
+players <- read_csv("http://mattwaite.github.io/sportsdatafiles/allplayers.csv")
+```
+```{r mutating-load-data-exercise-solution}
+players <- read_csv("http://mattwaite.github.io/sportsdatafiles/allplayers.csv")
+```
+```{r mutating-load-data-exercise-check}
+grade_this_code()
+```
+
+Remember, if you want to see the first six rows -- handy to take a peek at your data -- you can use the function `head`.
+
+```{r head-data, exercise=TRUE, exercise.setup = "mutating-load-data"}
+head(??????)
+```
+```{r head-data-solution}
+head(players)
+```
+```{r head-data-check}
+grade_this_code()
+```
+
+### Exercise 1: Calculating scorers 
+
+The code to calculate anything with mutate is pretty simple. Remember, with `summarize`, we used `n()` to count things. With `mutate`, we use very similar syntax to calculate a new value using other values in our dataset. 
+
+In this case, we're trying to find scorers using some basic metrics -- points per game and points per minute -- but we're doing it with fields (aka column names). If we look at what we got when we did `head`, you'll see there's a Games column (G), and a Points column (PTS). Then, to help us, we'll use arrange again to sort it, so we get the most ruthless squad over one year. Similar to summarize, we'll want to give what we create a name using =. 
+
+Replace the words in all caps with the correct parts and name the new column we're creating as ppg and ppm 
+
+```{r mutate-change, exercise=TRUE, exercise.setup = "mutating-load-data", message=FALSE}
+NAMEOFDATA %>%
+  mutate(
+    NEWCOLUMNNAME = POINTSCOLUMN/GAMESCOLUMN,
+    OTHERNEWCOLUMNNAME = POINTSCOLUMN/MINUTESCOLUMN
+) 
+```
+```{r mutate-change-solution, exercise.reveal_solution = FALSE}
+players %>% mutate(
+  ppg = PTS/G,
+  ppm = PTS/MP
+) 
+```
+```{r mutate-change-check}
+grade_this_code()
+```
+
+Click the black arrow at the top right of the results box to get all the way to the end, where you'll see ppg and ppm. 
+
+But does this tell us who the most ruthless scorer is? No. We need to arrange to do that. 
+
+```{r mutate-change2, exercise=TRUE, exercise.setup = "mutating-load-data", message=FALSE}
+NAMEOFDATA %>%
+  mutate(
+    NEWCOLUMNNAME = POINTSCOLUMN/GAMESCOLUMN,
+    OTHERNEWCOLUMNNAME = POINTSCOLUMN/MINUTESCOLUMN,
+) %>% 
+  arrange(desc(ppg))
+```
+```{r mutate-change2-solution, exercise.reveal_solution = FALSE}
+players %>% mutate(
+  ppg = PTS/G,
+  ppm = PTS/MP
+) %>%
+  arrange(desc(ppg))
+```
+```{r mutate-change2-check}
+grade_this_code()
+```
+
+```{r efficient, exercise=FALSE, exercise.eval=TRUE, exercise.setup = "mutating-load-data", results='asis'}
+glue("So in all these years, {efficient$Player} had the highest points per game with {format(efficient$ppg, digits=2)} points per game in {format(efficient$Season)}. He scored {format(efficient$ppm, digits=2)} points per minute played.")
+```
+
+### Exercise 2: Calculating a ratio
+
+Another common analysis task is converting two numbers into a ratio. How often do shooters make shots? You can look at made shots, but how then do you compare a player who has played a lot of games to one that hasn't played as many? You don't. That's why you create a percentage to compare the two. 
+
+Sticking with our player data, who had the cleanest season dealing the ball? To look at that, we can calculate a assist/turnover ratio. It uses simple division to show how many assists a player has compared to how many times they turn the ball over.
+
+To calculate a ratio, we need to remember a formula: The thing you are interested in / the thing you want to make your per. In this case, the per in this case is turnovers. X assists per turnover is the assist/turnover ratio. 
+
+To get this, we're going to do something very similar to the first exercise. The thing we're interested in is `AST` (short for Assists). The per is `TOV` (short for Turnovers). 
+
+Let's call our new column AssistTurnover.
+
+```{r mutate-change-percent, exercise=TRUE, exercise.setup = "mutating-load-data", message=FALSE}
+players %>%
+  mutate(NEWCOLUMNNAME = MAINTHING/PERTHING
+) %>%
+  arrange(desc(NEWCOLUMNNAME))
+```
+```{r mutate-change-percent-solution, exercise.reveal_solution = FALSE}
+players %>%
+  mutate(AssistTurnover = AST/TOV
+) %>%
+  arrange(desc(AssistTurnover))
+```
+```{r mutate-change-percent-check}
+grade_this_code()
+```
+```{r cleanpass, exercise=FALSE, exercise.eval=TRUE, exercise.setup = "mutating-load-data", results='asis'}
+glue("Uh oh. Who is {cleanpass$Player}? Is he really the cleanest facilitator in NBA history? Hardly. We'll deal with that next tutorial.")
+```

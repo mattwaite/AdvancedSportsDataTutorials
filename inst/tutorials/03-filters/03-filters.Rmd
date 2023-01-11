@@ -35,7 +35,7 @@ library(downloadthis)
 library(glue)
 
 dllink <- download_link(
-  link = "http://mattwaite.github.io/sportsdatafiles/footballlogs21.csv",
+  link = "http://mattwaite.github.io/sportsdatafiles/allplayers.csv",
   button_label = "Download csv file",
   button_type = "danger",
   has_icon = TRUE,
@@ -62,34 +62,36 @@ grade_this_code()
 Now import the data.
 
 ```{r filtering-load-data, message=FALSE, warning=FALSE}
-games <- read_csv("http://mattwaite.github.io/sportsdatafiles/footballlogs21.csv")
+players <- read_csv("http://mattwaite.github.io/sportsdatafiles/allplayers.csv")
 
-rushinggames <- nrow(games %>% filter(RushingYds > 250))
+topcleanpass <- players %>%
+  filter(MP >= 2600) %>%
+  mutate(AssistTurnover = (AST/TOV)
+) %>%
+  arrange(desc(AssistTurnover)) %>% slice(1)
 
-bigrush <- games %>% filter(RushingYds > 250) %>% filter(Conference == "Big Ten Conference")
-
-powerfive <- c("Southeastern Conference", "Big Ten Conference", "Pac-12 Conference", "Big 12 Conference", "Atlantic Coast Conference")
-
-toprush <- games %>% 
-  filter(Conference %in% powerfive) %>% 
-  select(Team, Conference, RushingYds, Opponent) %>%
-  top_n(1, wt=RushingYds)
+cleanpass <- players %>%
+  mutate(AssistTurnover = (AST/TOV)
+) %>%
+  arrange(desc(AssistTurnover))
 ```
 ```{r filtering-load-data-exercise, exercise = TRUE}
-games <- read_csv("http://mattwaite.github.io/sportsdatafiles/footballlogs21.csv")
+players <- read_csv("http://mattwaite.github.io/sportsdatafiles/allplayers.csv")
 ```
 ```{r filtering-load-data-exercise-solution}
-games <- read_csv("http://mattwaite.github.io/sportsdatafiles/footballlogs21.csv")
+players <- read_csv("http://mattwaite.github.io/sportsdatafiles/allplayers.csv")
 ```
 ```{r filtering-load-data-exercise-check}
 grade_this_code()
 ```
 
-So, first things first, let's say we don't care about all this Air Force, Akron, Alabama crap and just want to see Dear Old Nebraska U. We do that with `filter` and then we pass it a condition. 
+So, first things first, let's say we don't care about old players. You're children of the 2000s, you don't care about the 80s and 90s. 
 
-Before we do anything, a note about conditions. Most of the conditional operators you'll understand -- greater than and less than are > and <. The tough one to remember is equal to. In conditional statements, equal to is == not =. If you haven't noticed, = is a variable assignment operator, not a conditional statement. So equal is == and NOT equal is !=. 
+Before we do anything, a note about conditions. Most of the conditional operators you'll understand -- greater than and less than are > and <. You can add an equal sign to > and < to get greater than OR equal to (or the opposite). So >= would give you all whatevers greater than or equal to that number. 
 
-So if you want to see Nebraska, what would you do?
+The tough one to remember is equal to. In conditional statements, equal to is == not =. If you haven't noticed, = is a variable assignment operator, not a conditional statement. So equal is == and NOT equal is !=. 
+
+So if you want to see games from the 2000s and beyond, what would you do?
 
 First, let's use head to give us a peek at the data. This data's layout is ... not great ... so you're going to want to scroll all the way to the right to see the most useful columns for this exercise.
 
@@ -97,178 +99,124 @@ First, let's use head to give us a peek at the data. This data's layout is ... n
 head(?????)
 ```
 ```{r head-data-solution}
-head(games)
+head(players)
 ```
 ```{r head-data-check}
 grade_this_code()
 ```
 
-Now that we can see the column names, we now know Team is where the names of the universities are. Replace the all caps and question marks here and see if you can get only Nebraska.
+Now that we can see the column names, we now know Season is where the years are. Replace the all caps and question marks here and see if you can get only 2000s players.
 
-### Exercise 1: Dear Old Nebraska U 
+### Exercise 1: Current players only please 
 
-```{r filtering-nebraska, exercise=TRUE, exercise.setup = "filtering-load-data"}
-NAMEOFDATA %>% filter(NAMEOFCOLUMN == "????????")
+```{r filtering-new, exercise=TRUE, exercise.setup = "filtering-load-data"}
+NAMEOFDATA %>% filter(NAMEOFCOLUMN ?? 2000)
 ```
-```{r filtering-nebraska-solution}
-games %>% filter(Team == "Nebraska")
+```{r filtering-new-solution, exercise.reveal_solution = FALSE}
+players %>% filter(Season >= 2000)
 ```
-```{r filtering-nebraska-check}
+```{r filtering-new-check}
 grade_this_code()
 ```
 
-And what do you see? All of Nebraska's games last season. As much as we want to forget most of them, there they are.
+And what do you see? Lots of dudes who have played more recently than Magic Johnson.
 
-### Exercise 2: Run the damn ball
+### Exercise 2: So who really is delivering the ball?
 
-There's a certain strain of football fan around these parts that is absolutely obsessed with the past (cough cough cough) I mean running the ball. To this fan, run the ball = win. So what if we wanted to see games where teams ran for more than 250 yards?
+Now we get back to what we started last time. When last we left off, we were looking at the assist/turnover ratio and the answer we came up with was ... not someone you've ever heard of. Not one of the best passers in the game, that's for sure. 
 
-To do this, we need to know which column is rushing yards and we need to think about operators. We want more than 250 yards. Another name for more than, which you learned in math class in the third grade, is greater than. There's a symbol for that.
+So who is? This is an important concept to get. With some metrics, there needs to be a cutoff. There needs be some threshold to be included. What happens to our list if we only include people who played 2600 minutes or more? 
 
-```{r filtering-rushers, exercise=TRUE, exercise.setup = "filtering-load-data"}
-NAMEOFDATA %>% filter(NAMEOFRUSHINGYARDSCOLUMN > ???)
+```{r filtering-passers, exercise=TRUE, exercise.setup = "filtering-load-data"}
+players %>%
+  filter(?? ?? 2600) %>%
+  mutate(AssistTurnover = (AST/TOV)
+) %>%
+  arrange(desc(AssistTurnover))
 ```
-```{r filtering-rushers-solution}
-games %>% filter(RushingYds > 250)
+```{r filtering-passers-solution, exercise.reveal_solution = FALSE}
+players %>%
+  filter(MP >= 2600) %>%
+  mutate(AssistTurnover = (AST/TOV)
+) %>%
+  arrange(desc(AssistTurnover))
 ```
-```{r filtering-rushers-check}
+```{r filtering-passers-check}
 grade_this_code()
 ```
 
-```{r rushers, exercise=FALSE, exercise.eval=TRUE, exercise.setup = "filtering-load-data", results='asis'}
-glue("Look at that. There were {rushinggames} games last season where a team ran for more than 250 yards.")
+```{r passers, exercise=FALSE, exercise.eval=TRUE, exercise.setup = "filtering-load-data", results='asis'}
+glue("It's impossible to explain {topcleanpass$Player}. You can see his name a bunch in the first 10 rows of data. But what you don't see is he was 5'3\" tall -- literally the shortest player to every play in the NBA. And he was GOOD.")
 ```
 
-But how many of those were in the Big Ten? To do this we're going to *chain* filters together, which is a fancy way of just saying we're going to add another.
+We can see, though, that all of these players are point guards, which you would expect. What if we looked at guards who were supposed to be scoring? Aka shooting guards. There's a filter for that too. 
 
-Note: The conference name *must* be exact. B1G or Big Ten won't work. You have to spell it and capitalize it *exactly* like it is in the data. 
+Note: The position name *must* be exact. Sg or ShootingGuard. You have to spell it and capitalize it *exactly* like it is in the data. 
 
-### Exercise 3: B1G rushers
+### Exercise 3: Finding shooting guards
 
 ```{r filtering-big, exercise=TRUE, exercise.setup = "filtering-load-data"}
-NAMEOFDATA %>% 
-  filter(NAMEOFRUSHINGYARDSCOLUMN > ???) %>% 
-  filter(NAMEOFCONFERENCECOLUMN == "??????????????????")
+players %>%
+  filter(?? ?? 2600) %>%
+  filter(??? == "??") %>%
+  mutate(AssistTurnover = (AST/TOV)
+) %>%
+  arrange(desc(AssistTurnover))
 ```
-```{r filtering-big-solution}
-games %>% 
-  filter(RushingYds > 250) %>% 
-  filter(Conference == "Big Ten Conference")
+```{r filtering-big-solution, exercise.reveal_solution = FALSE}
+players %>%
+  filter(MP >= 2600) %>%
+  filter(Pos == "SG") %>%
+  mutate(AssistTurnover = (AST/TOV)
+) %>%
+  arrange(desc(AssistTurnover))
 ```
 ```{r filtering-big-check}
 grade_this_code()
 ```
 
-```{r bigrushers, exercise=FALSE, exercise.eval=TRUE, exercise.setup = "filtering-load-data", results='asis'}
-glue("In the Big Ten last year, there were {nrow(bigrush)} games last season where a team ran for more than 250 yards. The next questions an analyst would ask are how many times did those teams win their games and does this hold consistently across seasons? Alas, anther time. We have more filtering to do.")
-```
-
-### Exercise 4: Filtering with a list
-
-But what if we want to see all of the Power Five conferences? We *could* use conditional logic in our filter. The conditional logic operators are `|` for OR and `&` for AND. **NOTE: AND means all conditions have to be met. OR means any of the conditions work.** So be careful about boolean logic. 
-
-Here's what that looks like. It's a lot of extra code that you've got to be careful with.
-
-```{r filtering-power5, exercise=TRUE, exercise.setup = "filtering-load-data"}
-games %>% 
-  filter(
-    Conference == "Big Ten Conference" | 
-      Conference == "Southeastern Conference" | 
-      Conference == "Pac-12 Conference" | 
-      Conference == "Atlantic Coast Conference" | 
-      Conference == "Big 12 Conference")
-```
-```{r filtering-power5-solution}
-games %>% 
-  filter(
-    Conference == "Big Ten Conference" | 
-      Conference == "Southeastern Conference" | 
-      Conference == "Pac-12 Conference" | 
-      Conference == "Atlantic Coast Conference" | 
-      Conference == "Big 12 Conference")
-```
-```{r filtering-power5-check}
-grade_this_code()
-```
-
-But that's a lot of repetitive code. And a lot of typing. And typing is the devil. So what if we could create a list of conferences and pass it into the filter just once? It's pretty simple.
-
-We can create a new variable -- remember variables can represent just about anything -- and create a list. To do that we use the `c` operator, which stands for concatenate. That just means take all the stuff in the parenthesis after the c and bunch it into a list. 
-
-Note here: text is in quotes. If they were numbers, we wouldn't need the quotes. And `c()` gives us a list that we can use. 
-
-With a list, we can use the %in% operator. It does what you think it does -- it gives you data that matches things IN the list you give it. 
-
-```{r filtering-power, exercise=TRUE, exercise.setup = "filtering-load-data"}
-powerfive <- c("Southeastern Conference", "Big Ten Conference", "Pac-12 Conference", "Big 12 Conference", "Atlantic Coast Conference")
-
-NAMEOFDATA %>% filter(?????????? %in% ??????)
-```
-```{r filtering-power-solution}
-powerfive <- c("Southeastern Conference", "Big Ten Conference", "Pac-12 Conference", "Big 12 Conference", "Atlantic Coast Conference")
-
-games %>% filter(Conference %in% powerfive)
-```
-```{r filtering-power-check}
-grade_this_code()
-```
+Aside from the top name, look at the 9th person on the list. Was Magic a shooting guard or did he run the point? If you know Magic's career ... it's a complicated question. Something to look out for in the future is how players who do a lot get classified.
 
 ## Selecting data to make it easier to read
 
-So now we have our Power Five list. What if we just wanted to see team names, conferences and passing yards from the most recent season and ignore all the rest? Select to the rescue. With select, we just spell out exactly which columns we want to see. In our case, we've got three we're interested in seeing: Team, Conference and PassingYds. 
+With all of this, we have a lot of extra fields or columns we don't want. When we're talking about facilitators, maybe we only want to see the player name, their position, their age, team, games, assists, turnovers and the assist turnover ratio. We can do that with select, and with this class, you're going to be using select a bunch, because the algorithms we're going to use just want us to focus on certain things. 
 
-### Exercise 5: Select to simplify 
+### Exercise 4: Select to simplify 
+
+Generally speaking, select is something we want to place carefully. We don't want to select first, and then need someting. Often, since select is mainly cosmetic, we would do it last.
 
 ```{r selecting-power, exercise=TRUE, exercise.setup = "filtering-load-data"}
-powerfive <- c("Southeastern Conference", "Big Ten Conference", "Pac-12 Conference", "Big 12 Conference", "Atlantic Coast Conference")
-
-NAMEOFDATA %>% 
-  filter(???? %in% ??????) %>% 
-  select(????, ??????????, ??????????)
+players %>%
+  filter(?? >= 2600) %>%
+  mutate(AssistTurnover = (AST/TOV)
+) %>%
+  arrange(desc(AssistTurnover)) %>%
+  select(
+    Player,
+    Pos,
+    Age,
+    Tm,
+    ???,
+    ???,
+    ??????????????
+  )
 ```
-```{r selecting-power-solution}
-powerfive <- c("Southeastern Conference", "Big Ten Conference", "Pac-12 Conference", "Big 12 Conference", "Atlantic Coast Conference")
-
-games %>% 
-  filter(Conference %in% powerfive) %>% 
-  select(Team, Conference, PassingYds)
+```{r selecting-power-solution, exercise.reveal_solution = FALSE}
+players %>%
+  filter(MP >= 2600) %>%
+  mutate(AssistTurnover = (AST/TOV)
+) %>%
+  arrange(desc(AssistTurnover)) %>%
+  select(
+    Player,
+    Pos,
+    Age,
+    Tm,
+    AST,
+    TOV,
+    AssistTurnover
+  )
 ```
 ```{r selecting-power-check}
 grade_this_code()
-```
-
-If you have truly massive data, `select` has tools to help you select fields that start_with the same things or ends with a certain word. [The documentation will guide you](https://dplyr.tidyverse.org/reference/select.html) if you need those someday. For 90 plus percent of what we do, just naming the fields will be sufficient. 
-
-## Top list
-
-One last little dplyr trick that's nice to have in the toolbox is a shortcut for selecting only the top values for your dataset. Want to make a Top 10 List? Or Top 25? Or Top Whatever You Want? It's easy. 
-
-### Exercise 6: Top N lists
-
-So what are the top rushing games by Power Five schools? All we're doing here is chaining commands together with what we've already got. We're *filtering* by our list of Power Five conferences, we're *selecting* the three fields we need. Now we'll introduce the new function: `top_n`. The `top_n` function just takes a number and a weight, abbreviated wt. So we want a top 10 list? Take what you did above and just add an arrange and then a `top_n` to the end with a number inside the ().
-
-```{r selecting-top-power, exercise=TRUE, exercise.setup = "filtering-load-data"}
-powerfive <- c("Southeastern Conference", "Big Ten Conference", "Pac-12 Conference", "Big 12 Conference", "Atlantic Coast Conference")
-
-NAMEOFDATA %>% 
-  filter(???? %in% ??????) %>% 
-  select(????, ??????????, ??????????) %>%
-  arrange(desc(NAMEOFRUSHINGYARDSCOLUMN)) %>% 
-  top_n(??, wt=NAMEOFRUSHINGYARDSCOLUMN)
-```
-```{r selecting-top-power-solution, exercise.reveal_solution = FALSE}
-powerfive <- c("Southeastern Conference", "Big Ten Conference", "Pac-12 Conference", "Big 12 Conference", "Atlantic Coast Conference")
-
-games %>% 
-  filter(Conference %in% powerfive) %>% 
-  select(Team, Conference, RushingYds) %>%
-  arrange(desc(RushingYds)) %>% 
-  top_n(10, wt=RushingYds)
-```
-```{r selecting-top-power-check}
-grade_this_code()
-```
-
-```{r teamrushers, exercise=FALSE, exercise.eval=TRUE, exercise.setup = "filtering-load-data", results='asis'}
-glue("Last season, it was {toprush$Team} that went off for {toprush$RushingYds} yards in a single game. Impressive, until you realize it was against {toprush$Opponent}.")
 ```

@@ -106,7 +106,7 @@ The first thing that we need when joining data together is we need columns in bo
 Let's first look at the schedule. 
 
 ```{r head1-data, exercise=TRUE, exercise.setup = "join-load-data"}
-head(schedule)
+head(????????)
 ```
 ```{r head1-data-solution}
 head(schedule)
@@ -120,7 +120,7 @@ If you explore around in that data, you'll see two different kinds of IDs. There
 Now let's look at the teamgames data, to see if we can find similar id numbers. 
 
 ```{r head2-data, exercise=TRUE, exercise.setup = "join-load-data"}
-head(teamgames)
+head(?????????)
 ```
 ```{r head2-data-solution}
 head(teamgames)

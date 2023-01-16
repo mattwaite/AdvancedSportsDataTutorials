@@ -39,36 +39,36 @@ Because they're all under development, not all of them can be installed with jus
 
 The main issue for you is to read the documentation carefully. 
 
-## Using wehoop
+## Using hoopR
 
-wehoop presents us a good view into what using libraries like this are all about. And, as of this writing, Nebraska's women's basketball team is having a helluva season. 
+`hoopR` is a library you are going to use for your first major project in the class -- predicting winners in college basketball. So it would stand to reason that we need to be able to get data for college basketball games and team. 
 
 First things first, we need to load our libraries.  
 
 ```{r load-tidyverse, exercise=TRUE}
 library(tidyverse)
-library(wehoop)
+library(hoopR)
 ```
 ```{r load-tidyverse-solution}
 library(tidyverse)
-library(wehoop)
+library(hoopR)
 ```
 ```{r load-tidyverse-check}
 grade_this_code()
 ```
 
-Normally, you would be reading the documentation for wehoop or any of the libraries in the Sportsdataverse, but some of them are a little thin (and hey, they're free, so I'm not complaining). The best part of [the documentation](https://wehoop.sportsdataverse.org/index.html) for wehoop is in the functional reference, which is a road map to everything it can do. One of the more interesting things to me with wehoop, cfbfastR and hoopR is play-by-play data. But that data gets very large, very fast. Let's sstart with something smaller, like player box scores. 
+Normally, you would be reading the documentation for hoopR or any of the libraries in the Sportsdataverse, but some of them are a little thin (and hey, they're free, so I'm not complaining). The best part of [the documentation](https://hoopr.sportsdataverse.org/) for hoopR is in the [functional reference](https://hoopr.sportsdataverse.org/reference/index.html), which is a road map to everything it can do. One of the more interesting things to me with wehoop, cfbfastR and hoopR is play-by-play data. But that data gets very large, very fast. Let's sstart with something smaller, like player box scores. 
 
 Here's how to get player box scores for the current season (which are numbered by the year they end in). NOTE: The season is ongoing. What you get will look different what what I get as I'm writing this. If some of this writing looks a little vague, that's why. 
 
 ```{r packages-load-data, message=FALSE, warning=FALSE, results=FALSE}
-playerboxscores <- load_wbb_player_box(seasons = 2022)
+playerboxscores <- load_mbb_player_box(seasons = 2023)
 ```
 ```{r packages-load-data-exercise, exercise = TRUE}
-playerboxscores <- load_wbb_player_box(seasons = 2022)
+playerboxscores <- load_mbb_player_box(seasons = 2023)
 ```
 ```{r packages-load-data-exercise-solution}
-playerboxscores <- load_wbb_player_box(seasons = 2022)
+playerboxscores <- load_mbb_player_box(seasons = 2023)
 ```
 ```{r packages-load-data-exercise-check}
 grade_this_code()
@@ -90,9 +90,9 @@ Without noticing it, you've already seen the magic. You ran that one line of cod
 
 ### Exercise 1: Who has started the most for the Huskers?
 
-If you look at the data, there is one field that is a TRUE/FALSE field of who started the game. If you follow Nebraska Men's Basketball, you know that Fred Hoiberg has experimented with different starting lineups. Has Amy Williams been tinkering too?
+If you look at the data, there is one field that is a TRUE/FALSE field of who started the game. 
 
-First, since we have box scores for every team, we need to filter to just Nebraska. Then, we're going to use the & sign -- which is a way of saying AND. The filter is the team AND the starting status being true. Then we'll group by the player's name (look at glimpse) and count. This time, we're going to use a shortcut for counting called `tally`. 
+First, since we have box scores for every player in the NCAA, we need to filter to just Nebraska. Then, we're going to use the & sign -- which is a way of saying AND. The filter is the team AND the starting status being true. Then we'll group by the player's name (look at glimpse) and count. This time, we're going to use a shortcut for counting called `tally`. 
 
 ```{r starters, exercise=TRUE, exercise.setup = "packages-load-data"}
 playerboxscores %>% 
@@ -110,7 +110,7 @@ playerboxscores %>%
 grade_this_code()
 ```
 
-At least at the time of this writing, Coach Williams seems to be sticking with what works. 
+At least at the time of this writing, Coach Hoiberg seems to be sticking with what works. 
 
 ## Another example
 
@@ -118,16 +118,16 @@ The wehoop package also has play by play data in it. A warning -- this step will
 
 ### Exercise 2: Get play-by-play data
 
-The `load_wbb_pbp` function works very similar to the box scores. You're going to provide the season you want. We want this season.
+The `load_mbb_pbp` function works very similar to the box scores. You're going to provide the season you want. We want this season.
 
 ```{r packages2-load-data, message=FALSE, warning=FALSE, results=FALSE}
-playbyplay <- load_wbb_pbp(2022)
+playbyplay <- load_mbb_pbp(2023)
 ```
 ```{r packages2-load-data-exercise, exercise = TRUE}
-playbyplay <- load_wbb_pbp(????)
+playbyplay <- load_mbb_pbp(????)
 ```
 ```{r packages2-load-data-exercise-solution, exercise.reveal_solution = FALSE}
-playbyplay <- load_wbb_pbp(2022)
+playbyplay <- load_mbb_pbp(2023)
 ```
 ```{r packages2-load-data-exercise-check}
 grade_this_code()
@@ -169,4 +169,4 @@ playbyplay %>%
 grade_this_code()
 ```
 
-The most common plays -- defensive rebounds and free throws. But if you look at basketball stats, that makes sense. There's a lot more defensive rebounds than offensive. There's a lot more missed three than made ones, typically. But as Nebraska goes further on this run, you now have the ability to get very granular data to analyze how Amy Williams and the team are doing it. 
+The most common plays -- defensive rebounds and free throws. But if you look at basketball stats, that makes sense. There's a lot more defensive rebounds than offensive. There's a lot more missed three than made ones, typically. But as Nebraska goes further on this run, you now have the ability to get very granular data to analyze how Fred Hoiberg and the team are doing it. 

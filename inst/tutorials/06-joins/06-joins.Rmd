@@ -167,10 +167,10 @@ Now we're going to do the same thing with the schedule. However, we have a probl
 
 ```{r join2, exercise=TRUE, exercise.setup = "join-load-data", message=FALSE}
 home_games <- schedule %>%
-  select(id, home.uid)
+  select(id, ????.uid)
 
 away_games <- schedule %>%
-  select(id, away.uid)
+  select(id, ????.uid)
 ```
 ```{r join2-solution, exercise.reveal_solution = FALSE}
 home_games <- schedule %>%
@@ -197,7 +197,7 @@ Here's what that looks like:
 
 ```{r join3, exercise=TRUE, exercise.setup = "join-load-data", message=FALSE}
 home_games %>% 
-  inner_join(teamstats, by=c("id"="game_id", "home.uid"="team_uid")) %>%
+  ?????_join(teamstats, by=c("id"="game_id", "home.uid"="team_uid")) %>%
   rename(
     home_team_short_display_name = team_short_display_name, 
     home_team_score=team_score, 
@@ -222,7 +222,7 @@ Behind the scenes, I've gone ahead and made a home and away dataframe that is th
 The last thing we need to do is put it all together. When we have clean data, with matching field names, joins are pretty easy. 
 
 ```{r join4, exercise=TRUE, exercise.setup = "join-load-data", message=FALSE}
-home %>% inner_join(away)
+home %>% inner_join(????)
 ```
 ```{r join4-solution, exercise.reveal_solution = FALSE}
 home %>% inner_join(away)

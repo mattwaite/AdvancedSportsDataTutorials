@@ -120,7 +120,9 @@ grade_this_code()
 
 Click the black arrow at the top right of the results box to get all the way to the end, where you'll see ppg and ppm. 
 
-But does this tell us who the most ruthless scorer is? No. We need to arrange to do that. 
+### Exercise 2: Arranging scorers 
+
+But does this tell us who the most ruthless scorer is? No. We need to arrange to do that. Let's do it by ppg. 
 
 ```{r mutate-change2, exercise=TRUE, exercise.setup = "mutating-load-data", message=FALSE}
 NAMEOFDATA %>%
@@ -128,7 +130,7 @@ NAMEOFDATA %>%
     NEWCOLUMNNAME = POINTSCOLUMN/GAMESCOLUMN,
     OTHERNEWCOLUMNNAME = POINTSCOLUMN/MINUTESCOLUMN,
 ) %>% 
-  arrange(desc(ppg))
+  arrange(desc(???))
 ```
 ```{r mutate-change2-solution, exercise.reveal_solution = FALSE}
 players %>% mutate(
@@ -145,7 +147,7 @@ grade_this_code()
 glue("So in all these years, {efficient$Player} had the highest points per game with {format(efficient$ppg, digits=2)} points per game in {format(efficient$Season)}. He scored {format(efficient$ppm, digits=2)} points per minute played.")
 ```
 
-### Exercise 2: Calculating a ratio
+### Exercise 3: Calculating a ratio
 
 Another common analysis task is converting two numbers into a ratio. How often do shooters make shots? You can look at made shots, but how then do you compare a player who has played a lot of games to one that hasn't played as many? You don't. That's why you create a percentage to compare the two. 
 

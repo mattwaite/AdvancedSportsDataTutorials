@@ -165,6 +165,8 @@ grade_this_code()
 
 Now we're going to do the same thing with the schedule. However, we have a problem here -- a game has two teams. A home team and an away team. We have no way to know, from our teamstats data, who was the home or away team. To make this work, we need to make two dataframes -- one for home teams and one for away teams. 
 
+### Exercise 1: Find which uid you need
+
 ```{r join2, exercise=TRUE, exercise.setup = "join-load-data", message=FALSE}
 home_games <- schedule %>%
   select(id, ????.uid)
@@ -193,15 +195,17 @@ The next issue is the column names are not the same. Joining in dplyr is easiest
 
 One last bit of housekeeping -- when the data comes together, we'll need to rename some columns so they are home and away team specific.
 
+### Exercise 2: What kind of join?
+
 Here's what that looks like:
 
 ```{r join3, exercise=TRUE, exercise.setup = "join-load-data", message=FALSE}
 home_games %>% 
   ?????_join(teamstats, by=c("id"="game_id", "home.uid"="team_uid")) %>%
   rename(
-    home_team_short_display_name = team_short_display_name, 
-    home_team_score=team_score, 
-    home_rolling_shooting_percentage = rolling_shooting_percentage
+    ????_team_short_display_name = team_short_display_name, 
+    ????_team_score=team_score, 
+    ????_rolling_shooting_percentage = rolling_shooting_percentage
     )
 ```
 ```{r join3-solution, exercise.reveal_solution = FALSE}
@@ -217,7 +221,9 @@ home_games %>%
 grade_this_code()
 ```
 
-Behind the scenes, I've gone ahead and made a home and away dataframe that is the result of the above code, as well as one that does the away side too. 
+Behind the scenes, I've gone ahead and made a `home` and `away` dataframe that is the result of the above code. It does what you did, just stores them in a variable called home and away. The away one renamed everything the way you think it would. 
+
+### Exercise 3: Putting it all together
 
 The last thing we need to do is put it all together. When we have clean data, with matching field names, joins are pretty easy. 
 

@@ -1,5 +1,5 @@
 ---
-title: "Lesson 2: Mutating data review"
+title: "Advanced Sports Data Lesson 2: Mutating data review"
 output: 
   learnr::tutorial:
     progressive: true

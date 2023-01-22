@@ -1,5 +1,5 @@
 ---
-title: "Lesson 5: Using packages to get data"
+title: "Advanced Sports Data Lesson 5: Using packages to get data"
 output: 
   learnr::tutorial:
     progressive: true

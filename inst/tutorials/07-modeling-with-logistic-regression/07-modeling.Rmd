@@ -1,5 +1,5 @@
 ---
-title: "Lesson 7: Modeling with logistic regression"
+title: "Advanced Sports Data Lesson 7: Modeling with logistic regression"
 output: 
   learnr::tutorial:
     progressive: true

@@ -1,5 +1,5 @@
 ---
-title: "Lesson 6: Joins"
+title: "Advanced Sports Data Lesson 6: Joins"
 output: 
   learnr::tutorial:
     progressive: true

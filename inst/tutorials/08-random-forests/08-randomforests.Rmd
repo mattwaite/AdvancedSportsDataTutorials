@@ -1,5 +1,5 @@
 ---
-title: "Lesson 8: Random forests"
+title: "Advanced Sports Data Lesson 8: Random forests"
 output: 
   learnr::tutorial:
     progressive: true
@@ -36,7 +36,6 @@ library(tidyverse)
 library(tidymodels)
 library(hoopR)
 library(zoo)
-library(corrr)
 
 set.seed(1234)
 ```
@@ -45,7 +44,6 @@ library(tidyverse)
 library(tidymodels)
 library(hoopR)
 library(zoo)
-library(corrr)
 
 set.seed(1234)
 ```
@@ -122,6 +120,67 @@ modelgames <- games %>%
     opponent_rolling_ppp, 
     team_result
     ) 
+
+game_split <- initial_split(modelgames, prop = .8)
+game_train <- training(game_split)
+game_test <- testing(game_split)
+
+game_recipe <- 
+  recipe(team_result ~ ., data = game_train) %>% 
+  update_role(game_id, game_date, team_short_display_name, opponent_short_display_name, season, new_role = "ID") %>%
+  step_normalize(all_predictors())
+
+log_mod <- 
+  logistic_reg() %>% 
+  set_engine("glm") %>%
+  set_mode("classification")
+
+rf_mod <- 
+  rand_forest() %>% 
+  set_engine("ranger") %>%
+  set_mode("classification")
+
+log_workflow <- 
+  workflow() %>% 
+  add_model(log_mod) %>% 
+  add_recipe(game_recipe)
+
+rf_workflow <- 
+  workflow() %>% 
+  add_model(rf_mod) %>% 
+  add_recipe(game_recipe)
+
+log_fit <- 
+  log_workflow %>% 
+  fit(data = game_train)
+
+rf_fit <- 
+  rf_workflow %>% 
+  fit(data = game_train)
+
+logpredict <- log_fit %>% predict(new_data = game_train) %>%
+  bind_cols(game_train) 
+
+logpredict <- log_fit %>% predict(new_data = game_train, type="prob") %>%
+  bind_cols(logpredict)
+
+rfpredict <- rf_fit %>% predict(new_data = game_train) %>%
+  bind_cols(game_train) 
+
+rfpredict <- rf_fit %>% predict(new_data = game_train, type="prob") %>%
+  bind_cols(rfpredict)
+
+logtestpredict <- log_fit %>% predict(new_data = game_test) %>%
+  bind_cols(game_test)
+
+logtestpredict <- log_fit %>% predict(new_data = game_test, type="prob") %>%
+  bind_cols(logtestpredict)
+
+rftestpredict <- rf_fit %>% predict(new_data = game_test) %>%
+  bind_cols(game_test)
+
+rftestpredict <- rf_fit %>% predict(new_data = game_test, type="prob") %>%
+  bind_cols(rftestpredict)
 ```
 ```{r rf-load-data-exercise, exercise = TRUE}
 head(???????????)
@@ -137,10 +196,18 @@ For this tutorial, we're going to create two models from two workflows so that w
 
 ## Setup
 
+A random forest is, as the name implies, a large number of decision trees, and they use a random set of inputs. The algorithm creates a large number of randomly selected training inputs, and randomly chooses the feature input for each branch, creating predictions. The goal is to create uncorrelated forests of trees. The trees all make predictions, and the wisdom of the crowds takes over. In the case of classification algorithm, the most common prediction is the one that gets chosen. In a regression model, the predictions get averaged together.
 
+The random part of random forest is in how the number of tree splits get created and how the samples from the data are taken to generate the splits. They're randomized, which has the effect of limiting the influence of a particular feature and prevents overfitting -- where your predictions are so tailored to your training data that they miss badly on the test data.
 
-```{r split-data, exercise=TRUE, exercise.setup = "logit-load-data"}
-game_split <- initial_split(modelgames, prop = .8)
+For random forests, we change the model type to rand_forest and set the engine to "ranger". There's multiple implementations of the random forest algorithm, and the differences between them are beyond the scope of what we're doing here.
+
+We're going to go through the steps of modeling again, starting with splitting our `modelgames` data.
+
+### Exercise 1: setting up your data
+
+```{r split-data, exercise=TRUE, exercise.setup = "rf-load-data"}
+game_split <- initial_split(??????????, prop = .8)
 game_train <- training(game_split)
 game_test <- testing(game_split)
 ```
@@ -157,9 +224,13 @@ For this walkthrough, we're going to do both a logistic regression and a random 
 
 The recipe we'll create is the same for both, so we'll use it twice. 
 
-```{r recipe, exercise=TRUE, exercise.setup = "logit-load-data"}
+### Exercise 2: setting up the receipe
+
+So what data are we feeding into our recipe? 
+
+```{r recipe, exercise=TRUE, exercise.setup = "rf-load-data"}
 game_recipe <- 
-  recipe(team_result ~ ., data = game_train) %>% 
+  recipe(team_result ~ ., data = game_?????) %>% 
   update_role(game_id, game_date, team_short_display_name, opponent_short_display_name, season, new_role = "ID") %>%
   step_normalize(all_predictors())
 
@@ -179,7 +250,7 @@ grade_this_code()
 
 Now, we're going to create two different model specifications. The first will be the logistic regression model definintion and the second will be the random forest. 
 
-```{r model, exercise=TRUE, exercise.setup = "logit-load-data"}
+```{r model, exercise=TRUE, exercise.setup = "rf-load-data"}
 log_mod <- 
   logistic_reg() %>% 
   set_engine("glm") %>%
@@ -207,16 +278,18 @@ grade_this_code()
 
 Now we have enough for our workflows. We have two models and one recipe. 
 
-```{r workflow, exercise=TRUE, exercise.setup = "logit-load-data"}
+### Exercise 3: making workflows
+
+```{r workflow, exercise=TRUE, exercise.setup = "rf-load-data"}
 log_workflow <- 
   workflow() %>% 
-  add_model(log_mod) %>% 
-  add_recipe(game_recipe)
+  add_model(???_mod) %>% 
+  add_recipe(????_recipe)
 
 rf_workflow <- 
   workflow() %>% 
-  add_model(rf_mod) %>% 
-  add_recipe(game_recipe)
+  add_model(??_mod) %>% 
+  add_recipe(????_recipe)
 ```
 ```{r workflow-solution, exercise.reveal_solution = FALSE}
 log_workflow <- 
@@ -235,14 +308,16 @@ grade_this_code()
 
 Now we can fit our models to the data. 
 
-```{r fits, exercise=TRUE, exercise.setup = "logit-load-data"}
+### Exercise 4: fitting our models
+
+```{r fits, exercise=TRUE, exercise.setup = "rf-load-data"}
 log_fit <- 
   log_workflow %>% 
-  fit(data = game_train)
+  fit(data = ????_?????)
 
 rf_fit <- 
   rf_workflow %>% 
-  fit(data = game_train)
+  fit(data = ????_?????)
 ```
 ```{r fits-solution, exercise.reveal_solution = FALSE}
 log_fit <- 
@@ -259,7 +334,7 @@ grade_this_code()
 
 Now we can bind our predictions to the training data and see how we did.
 
-```{r predict, exercise=TRUE, exercise.setup = "logit-load-data"}
+```{r predict, exercise=TRUE, exercise.setup = "rf-load-data"}
 logpredict <- log_fit %>% predict(new_data = game_train) %>%
   bind_cols(game_train) 
 
@@ -291,8 +366,12 @@ grade_this_code()
 
 Now, how did we do? First, let's look at the logistic regression.
 
-```{r metrics1, exercise=TRUE, exercise.setup = "logit-load-data"}
-metrics(logpredict, team_result, .pred_class)
+### Exercise 5: The first metrics
+
+What prediction dataset do we feed into our metrics?
+
+```{r metrics1, exercise=TRUE, exercise.setup = "rf-load-data"}
+metrics(??????????, team_result, .pred_class)
 ```
 ```{r metrics1-solution, exercise.reveal_solution = FALSE}
 metrics(logpredict, team_result, .pred_class)
@@ -305,8 +384,10 @@ Same as last time, the logistic regression model comes in at 62 percent accuracy
 
 How about the random forest? 
 
-```{r metrics2, exercise=TRUE, exercise.setup = "logit-load-data"}
-metrics(rfpredict, team_result, .pred_class)
+### Exercise 6: Random forest metrics
+
+```{r metrics2, exercise=TRUE, exercise.setup = "rf-load-data"}
+metrics(??predict, team_result, .pred_class)
 ```
 ```{r metrics2-solution, exercise.reveal_solution = FALSE}
 metrics(rfpredict, team_result, .pred_class)
@@ -321,7 +402,7 @@ Remember: Where a model makes its money is in data that it has never seen before
 
 First, we look at logistic regression.
 
-```{r test1, exercise=TRUE, exercise.setup = "logit-load-data"}
+```{r test1, exercise=TRUE, exercise.setup = "rf-load-data"}
 logtestpredict <- log_fit %>% predict(new_data = game_test) %>%
   bind_cols(game_test)
 
@@ -346,7 +427,7 @@ grade_this_code()
 Just about the same. That's a robust model.
 
 Now, the inevitable crash with random forests. 
-```{r test2, exercise=TRUE, exercise.setup = "logit-load-data"}
+```{r test2, exercise=TRUE, exercise.setup = "rf-load-data"}
 rftestpredict <- rf_fit %>% predict(new_data = game_test) %>%
   bind_cols(game_test)
 
@@ -369,7 +450,7 @@ grade_this_code()
 ```
 Right at 57 percent. A little bit lower than logistic regression. But did they come to the same answers to get those numbers? No.
 
-```{r confusion, exercise=TRUE, exercise.setup = "logit-load-data"}
+```{r confusion, exercise=TRUE, exercise.setup = "rf-load-data"}
 logtestpredict %>%
   conf_mat(team_result, .pred_class)
 

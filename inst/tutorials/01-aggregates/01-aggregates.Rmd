@@ -356,7 +356,7 @@ players %>%
 ```{r group-by-7-check}
 grade_this_code()
 ```
-<div id="group-by-6-hint">
+<div id="group-by-7-hint">
 **Hint:** Breathe deep. Slow down. Think about it. What's missing here is stuff you've done already. 
 </div>
 

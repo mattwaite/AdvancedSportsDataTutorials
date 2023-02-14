@@ -68,14 +68,14 @@ teamstats <- teamgames %>%
   select(team_short_display_name, team_uid, game_id, game_date, team_score, rolling_shooting_percentage)
 
 home_games <- schedule %>%
-  select(id, home.uid)
+  select(id, home_uid)
 
 away_games <- schedule %>%
-  select(id, away.uid)
+  select(id, away_uid)
 
-home <- home_games %>% inner_join(teamstats, by=c("id"="game_id", "home.uid"="team_uid")) %>% rename(home_team_short_display_name = team_short_display_name, home_team_score=team_score, home_rolling_shooting_percentage = rolling_shooting_percentage)
+home <- home_games %>% inner_join(teamstats, by=c("id"="game_id", "home_uid"="team_uid")) %>% rename(home_team_short_display_name = team_short_display_name, home_team_score=team_score, home_rolling_shooting_percentage = rolling_shooting_percentage)
 
-away <- away_games %>% inner_join(teamstats, by=c("id"="game_id", "away.uid"="team_uid")) %>% rename(away_team_short_display_name = team_short_display_name, away_team_score=team_score, away_rolling_shooting_percentage = rolling_shooting_percentage)
+away <- away_games %>% inner_join(teamstats, by=c("id"="game_id", "away_uid"="team_uid")) %>% rename(away_team_short_display_name = team_short_display_name, away_team_score=team_score, away_rolling_shooting_percentage = rolling_shooting_percentage)
 ```
 ```{r join-load-data-exercise, exercise = TRUE}
 teamgames <- load_mbb_team_box(seasons = most_recent_mbb_season()) %>%
@@ -115,7 +115,7 @@ head(schedule)
 grade_this_code()
 ```
 
-If you explore around in that data, you'll see two different kinds of IDs. There's columns that have XXXX.id after them, and some have XXXX.uid after them. The difference is not really that important -- it's unique to the data provider -- but both represent ID numbers for that thing. For example `home.uid` and `away.uid` represent the id numbers of the home and away team. The `id` column is the ID number for this particular game. If we use both, we can get the home team for that specific game -- meaning the home team at that moment. That's important.
+If you explore around in that data, you'll see two different kinds of IDs. There's columns that have XXXX.id after them, and some have XXXX.uid after them. The difference is not really that important -- it's unique to the data provider -- but both represent ID numbers for that thing. For example `home_uid` and `away_uid` represent the id numbers of the home and away team. The `id` column is the ID number for this particular game. If we use both, we can get the home team for that specific game -- meaning the home team at that moment. That's important.
 
 Now let's look at the teamgames data, to see if we can find similar id numbers. 
 
@@ -129,7 +129,7 @@ head(teamgames)
 grade_this_code()
 ```
 
-This sometimes take a little bit of deduction, but if you look, you'll see `game_id`, which appears to match the `id` from the schedule dataset. Because we only have one team here, we won't have `home.uid` or `away.uid` ... but we do have `team_uid`, which appears to match the form of the schedule uids. 
+This sometimes take a little bit of deduction, but if you look, you'll see `game_id`, which appears to match the `id` from the schedule dataset. Because we only have one team here, we won't have `home_uid` or `away_uid` ... but we do have `team_uid`, which appears to match the form of the schedule uids. 
 
 That means we're in business.
 
@@ -169,17 +169,17 @@ Now we're going to do the same thing with the schedule. However, we have a probl
 
 ```{r join2, exercise=TRUE, exercise.setup = "join-load-data", message=FALSE}
 home_games <- schedule %>%
-  select(id, ????.uid)
+  select(id, ????_uid)
 
 away_games <- schedule %>%
-  select(id, ????.uid)
+  select(id, ????_uid)
 ```
 ```{r join2-solution, exercise.reveal_solution = FALSE}
 home_games <- schedule %>%
-  select(id, home.uid)
+  select(id, home_uid)
 
 away_games <- schedule %>%
-  select(id, away.uid)
+  select(id, away_uid)
 ```
 ```{r join2-check}
 grade_this_code()
@@ -201,7 +201,7 @@ Here's what that looks like:
 
 ```{r join3, exercise=TRUE, exercise.setup = "join-load-data", message=FALSE}
 home_games %>% 
-  ?????_join(teamstats, by=c("id"="game_id", "home.uid"="team_uid")) %>%
+  ?????_join(teamstats, by=c("id"="game_id", "home_uid"="team_uid")) %>%
   rename(
     ????_team_short_display_name = team_short_display_name, 
     ????_team_score=team_score, 
@@ -210,7 +210,7 @@ home_games %>%
 ```
 ```{r join3-solution, exercise.reveal_solution = FALSE}
 home_games %>% 
-  inner_join(teamstats, by=c("id"="game_id", "home.uid"="team_uid")) %>%
+  inner_join(teamstats, by=c("id"="game_id", "home_uid"="team_uid")) %>%
   rename(
     home_team_short_display_name = team_short_display_name, 
     home_team_score=team_score, 

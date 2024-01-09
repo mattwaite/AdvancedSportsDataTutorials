@@ -51,46 +51,41 @@ Let's first get set up with data. This next block will pull the most recent seas
 
 
 ```{r join-load-data, message=FALSE, warning=FALSE}
-teamgames <- load_mbb_team_box(seasons = most_recent_mbb_season()) %>%
-  separate(field_goals_made_field_goals_attempted, into = c("field_goals_made","field_goals_attempted")) %>%
-  separate(three_point_field_goals_made_three_point_field_goals_attempted, into = c("three_point_field_goals_made","three_point_field_goals_attempted")) %>%
-  separate(free_throws_made_free_throws_attempted, into = c("free_throws_made","free_throws_attempted")) %>%
-  mutate_at(12:35, as.numeric)
+teamgames <- load_mbb_team_box(seasons = most_recent_mbb_season())
 
 schedule <- load_mbb_schedule(seasons = most_recent_mbb_season())
 
-teamstats <- teamgames %>% 
-  group_by(team_short_display_name) %>%
+teamstats <- teamgames |> 
+  group_by(team_short_display_name) |>
   mutate(
-    team_score = ((field_goals_made-three_point_field_goals_made) * 2) + (three_point_field_goals_made*3) + free_throws_made,
     rolling_shooting_percentage = rollmean(lag(field_goal_pct, n=1), k=5, fill=field_goal_pct)
-    ) %>%
+    ) |>
   select(team_short_display_name, team_uid, game_id, game_date, team_score, rolling_shooting_percentage)
 
-home_games <- schedule %>%
+home_games <- schedule |>
   select(id, home_uid)
 
-away_games <- schedule %>%
+away_games <- schedule |>
   select(id, away_uid)
 
-home <- home_games %>% inner_join(teamstats, by=c("id"="game_id", "home_uid"="team_uid")) %>% rename(home_team_short_display_name = team_short_display_name, home_team_score=team_score, home_rolling_shooting_percentage = rolling_shooting_percentage)
+home <- home_games |> inner_join(teamstats, by=c("id"="game_id", "home_uid"="team_uid")) |> rename(home_team_short_display_name = team_short_display_name, home_team_score=team_score, home_rolling_shooting_percentage = rolling_shooting_percentage)
 
-away <- away_games %>% inner_join(teamstats, by=c("id"="game_id", "away_uid"="team_uid")) %>% rename(away_team_short_display_name = team_short_display_name, away_team_score=team_score, away_rolling_shooting_percentage = rolling_shooting_percentage)
+away <- away_games |> inner_join(teamstats, by=c("id"="game_id", "away_uid"="team_uid")) |> rename(away_team_short_display_name = team_short_display_name, away_team_score=team_score, away_rolling_shooting_percentage = rolling_shooting_percentage)
 ```
 ```{r join-load-data-exercise, exercise = TRUE}
-teamgames <- load_mbb_team_box(seasons = most_recent_mbb_season()) %>%
-  separate(field_goals_made_field_goals_attempted, into = c("field_goals_made","field_goals_attempted")) %>%
-  separate(three_point_field_goals_made_three_point_field_goals_attempted, into = c("three_point_field_goals_made","three_point_field_goals_attempted")) %>%
-  separate(free_throws_made_free_throws_attempted, into = c("free_throws_made","free_throws_attempted")) %>%
+teamgames <- load_mbb_team_box(seasons = most_recent_mbb_season()) |>
+  separate(field_goals_made_field_goals_attempted, into = c("field_goals_made","field_goals_attempted")) |>
+  separate(three_point_field_goals_made_three_point_field_goals_attempted, into = c("three_point_field_goals_made","three_point_field_goals_attempted")) |>
+  separate(free_throws_made_free_throws_attempted, into = c("free_throws_made","free_throws_attempted")) |>
   mutate_at(12:35, as.numeric)
 
 schedule <- load_mbb_schedule(seasons = most_recent_mbb_season())
 ```
 ```{r join-load-data-exercise-solution}
-teamgames <- load_mbb_team_box(seasons = most_recent_mbb_season()) %>%
-  separate(field_goals_made_field_goals_attempted, into = c("field_goals_made","field_goals_attempted")) %>%
-  separate(three_point_field_goals_made_three_point_field_goals_attempted, into = c("three_point_field_goals_made","three_point_field_goals_attempted")) %>%
-  separate(free_throws_made_free_throws_attempted, into = c("free_throws_made","free_throws_attempted")) %>%
+teamgames <- load_mbb_team_box(seasons = most_recent_mbb_season()) |>
+  separate(field_goals_made_field_goals_attempted, into = c("field_goals_made","field_goals_attempted")) |>
+  separate(three_point_field_goals_made_three_point_field_goals_attempted, into = c("three_point_field_goals_made","three_point_field_goals_attempted")) |>
+  separate(free_throws_made_free_throws_attempted, into = c("free_throws_made","free_throws_attempted")) |>
   mutate_at(12:35, as.numeric)
 
 schedule <- load_mbb_schedule(seasons = most_recent_mbb_season())
@@ -142,21 +137,21 @@ In our case, we're going to do a couple of things. First, we're going to calcula
 We'll put all of this into a new dataframe called teamstats.
 
 ```{r join1, exercise=TRUE, exercise.setup = "join-load-data", message=FALSE}
-teamstats <- teamgames %>% 
-  group_by(team_short_display_name) %>%
+teamstats <- teamgames |> 
+  group_by(team_short_display_name) |>
   mutate(
     team_score = ((field_goals_made-three_point_field_goals_made) * 2) + (three_point_field_goals_made*3) + free_throws_made,
     rolling_shooting_percentage = rollmean(lag(field_goal_pct, n=1), k=5, fill=field_goal_pct)
-    ) %>%
+    ) |>
   select(team_short_display_name, team_uid, game_id, game_date, team_score, rolling_shooting_percentage)
 ```
 ```{r join1-solution, exercise.reveal_solution = FALSE}
-teamstats <- teamgames %>% 
-  group_by(team_short_display_name) %>%
+teamstats <- teamgames |> 
+  group_by(team_short_display_name) |>
   mutate(
     team_score = ((field_goals_made-three_point_field_goals_made) * 2) + (three_point_field_goals_made*3) + free_throws_made,
     rolling_shooting_percentage = rollmean(lag(field_goal_pct, n=1), k=5, fill=field_goal_pct)
-    ) %>%
+    ) |>
   select(team_short_display_name, team_uid, game_id, game_date, team_score, rolling_shooting_percentage)
 ```
 ```{r join1-check}
@@ -168,17 +163,17 @@ Now we're going to do the same thing with the schedule. However, we have a probl
 ### Exercise 1: Find which uid you need
 
 ```{r join2, exercise=TRUE, exercise.setup = "join-load-data", message=FALSE}
-home_games <- schedule %>%
+home_games <- schedule |>
   select(id, ????_uid)
 
-away_games <- schedule %>%
+away_games <- schedule |>
   select(id, ????_uid)
 ```
 ```{r join2-solution, exercise.reveal_solution = FALSE}
-home_games <- schedule %>%
+home_games <- schedule |>
   select(id, home_uid)
 
-away_games <- schedule %>%
+away_games <- schedule |>
   select(id, away_uid)
 ```
 ```{r join2-check}
@@ -200,8 +195,8 @@ One last bit of housekeeping -- when the data comes together, we'll need to rena
 Here's what that looks like:
 
 ```{r join3, exercise=TRUE, exercise.setup = "join-load-data", message=FALSE}
-home_games %>% 
-  ?????_join(teamstats, by=c("id"="game_id", "home_uid"="team_uid")) %>%
+home_games |> 
+  ?????_join(teamstats, by=c("id"="game_id", "home_uid"="team_uid")) |>
   rename(
     ????_team_short_display_name = team_short_display_name, 
     ????_team_score=team_score, 
@@ -209,8 +204,8 @@ home_games %>%
     )
 ```
 ```{r join3-solution, exercise.reveal_solution = FALSE}
-home_games %>% 
-  inner_join(teamstats, by=c("id"="game_id", "home_uid"="team_uid")) %>%
+home_games |> 
+  inner_join(teamstats, by=c("id"="game_id", "home_uid"="team_uid")) |>
   rename(
     home_team_short_display_name = team_short_display_name, 
     home_team_score=team_score, 
@@ -228,10 +223,10 @@ Behind the scenes, I've gone ahead and made a `home` and `away` dataframe that i
 The last thing we need to do is put it all together. When we have clean data, with matching field names, joins are pretty easy. 
 
 ```{r join4, exercise=TRUE, exercise.setup = "join-load-data", message=FALSE}
-home %>% inner_join(????)
+home |> inner_join(????)
 ```
 ```{r join4-solution, exercise.reveal_solution = FALSE}
-home %>% inner_join(away)
+home |> inner_join(away)
 ```
 ```{r join4-check}
 grade_this_code()

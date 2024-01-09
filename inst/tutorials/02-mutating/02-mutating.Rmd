@@ -60,16 +60,16 @@ Your first task is to import the data. For this exercise, you need to simply run
 ```{r mutating-load-data, message=FALSE, warning=FALSE}
 players <- read_csv("http://mattwaite.github.io/sportsdatafiles/allplayers.csv")
 
-efficient <- players %>% mutate(
+efficient <- players |> mutate(
   ppg = PTS/G,
   ppm = PTS/MP
-) %>% 
-  arrange(desc(ppg)) %>% slice(1)
+) |> 
+  arrange(desc(ppg)) |> slice(1)
 
-cleanpass <- players %>%
+cleanpass <- players |>
   mutate(AssistTurnover = (AST/TOV)
-) %>%
-  arrange(desc(AssistTurnover)) %>% slice(1)
+) |>
+  arrange(desc(AssistTurnover)) |> slice(1)
 ```
 ```{r mutating-load-data-exercise, exercise = TRUE}
 players <- read_csv("http://mattwaite.github.io/sportsdatafiles/allplayers.csv")
@@ -102,14 +102,14 @@ In this case, we're trying to find scorers using some basic metrics -- points pe
 Replace the words in all caps with the correct parts and name the new column we're creating as ppg and ppm 
 
 ```{r mutate-change, exercise=TRUE, exercise.setup = "mutating-load-data", message=FALSE}
-NAMEOFDATA %>%
+NAMEOFDATA |>
   mutate(
     NEWCOLUMNNAME = POINTSCOLUMN/GAMESCOLUMN,
     OTHERNEWCOLUMNNAME = POINTSCOLUMN/MINUTESCOLUMN
 ) 
 ```
 ```{r mutate-change-solution, exercise.reveal_solution = FALSE}
-players %>% mutate(
+players |> mutate(
   ppg = PTS/G,
   ppm = PTS/MP
 ) 
@@ -125,18 +125,18 @@ Click the black arrow at the top right of the results box to get all the way to 
 But does this tell us who the most ruthless scorer is? No. We need to arrange to do that. Let's do it by ppg. 
 
 ```{r mutate-change2, exercise=TRUE, exercise.setup = "mutating-load-data", message=FALSE}
-NAMEOFDATA %>%
+NAMEOFDATA |>
   mutate(
     NEWCOLUMNNAME = POINTSCOLUMN/GAMESCOLUMN,
     OTHERNEWCOLUMNNAME = POINTSCOLUMN/MINUTESCOLUMN,
-) %>% 
+) |> 
   arrange(desc(???))
 ```
 ```{r mutate-change2-solution, exercise.reveal_solution = FALSE}
-players %>% mutate(
+players |> mutate(
   ppg = PTS/G,
   ppm = PTS/MP
-) %>%
+) |>
   arrange(desc(ppg))
 ```
 ```{r mutate-change2-check}
@@ -160,15 +160,15 @@ To get this, we're going to do something very similar to the first exercise. The
 Let's call our new column AssistTurnover.
 
 ```{r mutate-change-percent, exercise=TRUE, exercise.setup = "mutating-load-data", message=FALSE}
-players %>%
+players |>
   mutate(NEWCOLUMNNAME = MAINTHING/PERTHING
-) %>%
+) |>
   arrange(desc(NEWCOLUMNNAME))
 ```
 ```{r mutate-change-percent-solution, exercise.reveal_solution = FALSE}
-players %>%
+players |>
   mutate(AssistTurnover = AST/TOV
-) %>%
+) |>
   arrange(desc(AssistTurnover))
 ```
 ```{r mutate-change-percent-check}

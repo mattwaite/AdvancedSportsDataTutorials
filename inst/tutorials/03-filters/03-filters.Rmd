@@ -64,15 +64,15 @@ Now import the data.
 ```{r filtering-load-data, message=FALSE, warning=FALSE}
 players <- read_csv("http://mattwaite.github.io/sportsdatafiles/allplayers.csv")
 
-topcleanpass <- players %>%
-  filter(MP >= 2600) %>%
+topcleanpass <- players |>
+  filter(MP >= 2600) |>
   mutate(AssistTurnover = (AST/TOV)
-) %>%
-  arrange(desc(AssistTurnover)) %>% slice(1)
+) |>
+  arrange(desc(AssistTurnover)) |> slice(1)
 
-cleanpass <- players %>%
+cleanpass <- players |>
   mutate(AssistTurnover = (AST/TOV)
-) %>%
+) |>
   arrange(desc(AssistTurnover))
 ```
 ```{r filtering-load-data-exercise, exercise = TRUE}
@@ -110,10 +110,10 @@ Now that we can see the column names, we now know Season is where the years are.
 ### Exercise 1: Current players only please 
 
 ```{r filtering-new, exercise=TRUE, exercise.setup = "filtering-load-data"}
-NAMEOFDATA %>% filter(NAMEOFCOLUMN ?? 2000)
+NAMEOFDATA |> filter(NAMEOFCOLUMN ?? 2000)
 ```
 ```{r filtering-new-solution, exercise.reveal_solution = FALSE}
-players %>% filter(Season >= 2000)
+players |> filter(Season >= 2000)
 ```
 ```{r filtering-new-check}
 grade_this_code()
@@ -128,17 +128,17 @@ Now we get back to what we started last time. When last we left off, we were loo
 So who is? This is an important concept to get. With some metrics, there needs to be a cutoff. There needs be some threshold to be included. What happens to our list if we only include people who played 2600 minutes or more? 
 
 ```{r filtering-passers, exercise=TRUE, exercise.setup = "filtering-load-data"}
-players %>%
-  filter(?? ?? 2600) %>%
+players |>
+  filter(?? ?? 2600) |>
   mutate(AssistTurnover = (AST/TOV)
-) %>%
+) |>
   arrange(desc(AssistTurnover))
 ```
 ```{r filtering-passers-solution, exercise.reveal_solution = FALSE}
-players %>%
-  filter(MP >= 2600) %>%
+players |>
+  filter(MP >= 2600) |>
   mutate(AssistTurnover = (AST/TOV)
-) %>%
+) |>
   arrange(desc(AssistTurnover))
 ```
 ```{r filtering-passers-check}
@@ -156,19 +156,19 @@ Note: The position name *must* be exact. Sg or ShootingGuard. You have to spell 
 ### Exercise 3: Finding shooting guards
 
 ```{r filtering-big, exercise=TRUE, exercise.setup = "filtering-load-data"}
-players %>%
-  filter(?? ?? 2600) %>%
-  filter(??? == "??") %>%
+players |>
+  filter(?? ?? 2600) |>
+  filter(??? == "??") |>
   mutate(AssistTurnover = (AST/TOV)
-) %>%
+) |>
   arrange(desc(AssistTurnover))
 ```
 ```{r filtering-big-solution, exercise.reveal_solution = FALSE}
-players %>%
-  filter(MP >= 2600) %>%
-  filter(Pos == "SG") %>%
+players |>
+  filter(MP >= 2600) |>
+  filter(Pos == "SG") |>
   mutate(AssistTurnover = (AST/TOV)
-) %>%
+) |>
   arrange(desc(AssistTurnover))
 ```
 ```{r filtering-big-check}
@@ -186,11 +186,11 @@ With all of this, we have a lot of extra fields or columns we don't want. When w
 Generally speaking, select is something we want to place carefully. We don't want to select first, and then need someting. Often, since select is mainly cosmetic, we would do it last.
 
 ```{r selecting-power, exercise=TRUE, exercise.setup = "filtering-load-data"}
-players %>%
-  filter(?? >= 2600) %>%
+players |>
+  filter(?? >= 2600) |>
   mutate(AssistTurnover = (AST/TOV)
-) %>%
-  arrange(desc(AssistTurnover)) %>%
+) |>
+  arrange(desc(AssistTurnover)) |>
   select(
     Player,
     Pos,
@@ -202,11 +202,11 @@ players %>%
   )
 ```
 ```{r selecting-power-solution, exercise.reveal_solution = FALSE}
-players %>%
-  filter(MP >= 2600) %>%
+players |>
+  filter(MP >= 2600) |>
   mutate(AssistTurnover = (AST/TOV)
-) %>%
-  arrange(desc(AssistTurnover)) %>%
+) |>
+  arrange(desc(AssistTurnover)) |>
   select(
     Player,
     Pos,

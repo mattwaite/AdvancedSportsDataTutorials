@@ -63,10 +63,10 @@ Now we'll load the data.
 ```{r transforming-load-data, message=FALSE, warning=FALSE}
 nba <- read_csv("http://mattwaite.github.io/sportsdatafiles/nbalong.csv")
 
-nbawide <- nba |> pivot_wider(names_from = Season, values_from = OffRtg)
+nbawide <- nba |> pivot_wider(names_from = Season, values_from = PTS)
 
 tops <- nbawide |>
-  mutate(Difference = `2021-2022` - `2020-2021`) |>
+  mutate(Difference = `2023` - `2022`) |>
   arrange(desc(Difference)) |>
   slice(1)
 ```
@@ -98,13 +98,13 @@ As you can see, each row represents one season for one team. The problem we face
 
 To fix this, we use `pivot_wider` because we're making long data wide.
 
-Making wide data out of long data is relatively simple. `pivot_wider` is a function that takes two inputs -- `names_from` and `values_from`. How do we know which goes in which? When you have three fields like we do, it's pretty easy. The first thing you know is that it's not the name of the team or the player. We know, in the picture in our minds what this should look like, the name is the first thing. That leaves two other things -- the season and the offensive rating. If you think of what would look good as column names -- the headers across the top -- ask yourself, is it the season names -- 2018-2019, 2019-2020, etc. -- or is it **all** the possible combinations of offensive ratings. Go with the one that *isn't* going to create a million columns for the `names_from` bit. 
+Making wide data out of long data is relatively simple. `pivot_wider` is a function that takes two inputs -- `names_from` and `values_from`. How do we know which goes in which? When you have three fields like we do, it's pretty easy. The first thing you know is that it's not the name of the team or the player. We know, in the picture in our minds what this should look like, the name is the first thing. That leaves two other things -- the season and the offensive rating, which is expressed as PTS. If you think of what would look good as column names -- the headers across the top -- ask yourself, is it the season names -- 2018, 2019, etc. -- or is it **all** the possible combinations of offensive ratings? Go with the one that *isn't* going to create a million columns for the `names_from` bit. 
 
 ```{r pivoting-wider, exercise=TRUE, exercise.setup = "transforming-load-data"}
 nba |> pivot_wider(names_from = ??????, values_from = ??????)
 ```
 ```{r pivoting-wider-solution, exercise.reveal_solution = FALSE}
-nba |> pivot_wider(names_from = Season, values_from = OffRtg)
+nba |> pivot_wider(names_from = Season, values_from = PTS)
 ```
 ```{r pivoting-wider-check}
 grade_this_code()
@@ -114,11 +114,11 @@ You've gone from 240 rows to 30. Why? Because now each row is a team. There are 
 
 ### Exercise 2: Chaining commands to answer a question
 
-Now that we have wide data, we can answer this question: Which offense got better the most this season from the previous season? 
+Now that we have wide data, we can answer this question: Which offense got better the most this most recent complete season from the previous season? 
 
 The first thing we will need to do is save our data into a new dataframe. We do that with a `<-`. We'll save it into a new dataframe called nbawide.
 
-Then, we're going to use mutate to subtract last season's offensive rating -- the points per 100 possessions -- from this season's. **A quirk of dplyr: Because the column names now start with a number -- for example 2019 -- we have to put backticks around the seasons. The backtick says "this is okay."
+Then, we're going to use mutate to subtract last season's offensive rating -- the PTS per 100 possessions -- from this season's. **A quirk of dplyr: Because the column names now start with a number -- for example 2019 -- we have to put backticks around the seasons. The backtick says "this is okay."
 
 Finally, we'll arrange to see who was tops.
 
@@ -130,10 +130,10 @@ nbawide |>
   arrange(desc(COLUMNNAMEFROMMUTATE))
 ```
 ```{r pivoting-mutate-solution, exercise.reveal_solution = FALSE}
-nbawide <- nba |> pivot_wider(names_from = Season, values_from = OffRtg)
+nbawide <- nba |> pivot_wider(names_from = Season, values_from = PTS)
 
 nbawide |>
-  mutate(Difference = `2021-2022` - `2020-2021`) |>
+  mutate(Difference = `2023` - `2022`) |>
   arrange(desc(Difference))
 ```
 ```{r pivoting-mutate-check}

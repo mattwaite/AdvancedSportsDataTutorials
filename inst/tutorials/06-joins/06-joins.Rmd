@@ -73,20 +73,12 @@ home <- home_games |> inner_join(teamstats, by=c("id"="game_id", "home_uid"="tea
 away <- away_games |> inner_join(teamstats, by=c("id"="game_id", "away_uid"="team_uid")) |> rename(away_team_short_display_name = team_short_display_name, away_team_score=team_score, away_rolling_shooting_percentage = rolling_shooting_percentage)
 ```
 ```{r join-load-data-exercise, exercise = TRUE}
-teamgames <- load_mbb_team_box(seasons = most_recent_mbb_season()) |>
-  separate(field_goals_made_field_goals_attempted, into = c("field_goals_made","field_goals_attempted")) |>
-  separate(three_point_field_goals_made_three_point_field_goals_attempted, into = c("three_point_field_goals_made","three_point_field_goals_attempted")) |>
-  separate(free_throws_made_free_throws_attempted, into = c("free_throws_made","free_throws_attempted")) |>
-  mutate_at(12:35, as.numeric)
+teamgames <- load_mbb_team_box(seasons = most_recent_mbb_season())
 
 schedule <- load_mbb_schedule(seasons = most_recent_mbb_season())
 ```
 ```{r join-load-data-exercise-solution}
-teamgames <- load_mbb_team_box(seasons = most_recent_mbb_season()) |>
-  separate(field_goals_made_field_goals_attempted, into = c("field_goals_made","field_goals_attempted")) |>
-  separate(three_point_field_goals_made_three_point_field_goals_attempted, into = c("three_point_field_goals_made","three_point_field_goals_attempted")) |>
-  separate(free_throws_made_free_throws_attempted, into = c("free_throws_made","free_throws_attempted")) |>
-  mutate_at(12:35, as.numeric)
+teamgames <- load_mbb_team_box(seasons = most_recent_mbb_season())
 
 schedule <- load_mbb_schedule(seasons = most_recent_mbb_season())
 ```
